@@ -19,15 +19,33 @@ spec:
         image: nicocaba3/docker-work:tagname
         ports:
         - containerPort: 3000 
+        env:
+        - name: USER_NAME
+          valueFrom:
+            secretKeyRef:
+              name: mongo-secret
+              key: mongo-user
+        - name: USER_PASSWORD
+          valueFrom:
+            secretKeyRef:
+              name: mongo-secret
+              key: mongo-user
+        - name: DB_URL
+          valueFrom:
+            configMapKeyRef:
+              name: mongo-config
+              key: mongo-url
 ---
 apiVersion: v1
 kind: Service
 metadata:
   name: web-app-service
 spec:
+  type: NodePort
   selector:
     app: web-app
   ports:
     - protocol: TCP
       port: 3000
       targetPort: 3000
+      nodePort: 30100
